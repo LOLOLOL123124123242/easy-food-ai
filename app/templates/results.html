@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Generated Recipes</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Generated Recipes</h1>
+
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% else %}
+            <h2>Detected Ingredients</h2>
+            <ul>
+                {% for ingredient in ingredients %}
+                    <li>{{ ingredient }}</li>
+                {% endfor %}
+            </ul>
+
+            <h2>Meal Suggestions</h2>
+            {% for recipe in recipes %}
+                <div class="recipe-card">
+                    <h3>{{ recipe.name }}</h3>
+                    <p><strong>Time:</strong> {{ recipe.time }}</p>
+                    <p><strong>Difficulty:</strong> {{ recipe.difficulty }}</p>
+                    <p><strong>Calories:</strong> {{ recipe.calories }}</p>
+                    <p><strong>Ingredients:</strong> {{ recipe.ingredients }}</p>
+
+                    <h4>Steps</h4>
+                    <ol>
+                        {% for step in recipe.steps %}
+                            <li>{{ step }}</li>
+                        {% endfor %}
+                    </ol>
+
+                    <form action="/save" method="POST">
+                        <input type="hidden" name="recipe_name" value="{{ recipe.name }}">
+                        <input type="hidden" name="ingredients" value="{{ recipe.ingredients }}">
+                        <input type="hidden" name="steps" value="{{ recipe.steps | join(' | ') }}">
+                        <button type="submit">Save Recipe</button>
+                    </form>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <a href="/">Back</a>
+    </div>
+</body>
+</html>
