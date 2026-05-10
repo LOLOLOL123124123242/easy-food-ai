@@ -1,0 +1,1 @@
+This folder stores YOLO/OpenCV AI model files for ingredient detection.
