@@ -25,6 +25,7 @@ def test_complete_ai_flow():
         print(f"Time: {recipe['time']}")
         print(f"Difficulty: {recipe['difficulty']}")
         print(f"Calories: {recipe['calories']}")
+        print(f"Category: {recipe.get('category', 'General')}")
         print("Ingredients:", ", ".join(recipe["ingredients"]))
 
         print("Steps:")

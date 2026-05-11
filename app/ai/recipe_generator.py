@@ -19,13 +19,13 @@ def fallback_recipe(ingredients: List[str]) -> List[Dict[str, object]]:
             "time": "25 minutes",
             "difficulty": "Easy",
             "calories": "350 kcal",
+            "category": "Quick Meal",
             "steps": [
                 "Wash and prepare all ingredients.",
                 "Chop the ingredients into small pieces.",
                 "Heat olive oil in a pan.",
                 "Cook the ingredients until soft.",
-                "Season with salt and black pepper.",
-                "Serve warm."
+                "Season and serve warm."
             ]
         }
     ]
@@ -43,15 +43,30 @@ Available ingredients:
 
 Generate 4 realistic meals using ONLY these ingredients.
 You may use basic cooking essentials like water, salt, black pepper, and olive oil.
+
 Do NOT invent additional ingredients.
+
+Each recipe must include:
+- Recipe name
+- Ingredients
+- Cooking time
+- Difficulty
+- Calories
+- Category
+- Cooking steps
+
+Allowed categories:
+- Healthy
+- Vegetarian
+- Low Calorie
+- High Protein
+- Quick Meal
 
 IMPORTANT:
 - Return ONLY valid JSON
 - No markdown
 - No explanations
 - No extra text
-- Calories must be estimated realistically
-- Steps must be clear and beginner-friendly
 
 JSON format:
 [
@@ -61,6 +76,7 @@ JSON format:
     "time": "25 minutes",
     "difficulty": "Easy",
     "calories": "350 kcal",
+    "category": "Healthy",
     "steps": [
       "Step 1",
       "Step 2",
@@ -77,10 +93,11 @@ JSON format:
                 {"role": "user", "content": prompt}
             ],
             temperature=0.5,
-            max_tokens=1200,
+            max_tokens=1400,
         )
 
         text_response = response.choices[0].message.content.strip()
+
         recipes = json.loads(text_response)
 
         if not isinstance(recipes, list):
@@ -90,4 +107,5 @@ JSON format:
 
     except Exception as e:
         print(f"\nAI Recipe Generation Error: {e}")
+
         return fallback_recipe(ingredients)
