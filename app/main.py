@@ -7,9 +7,11 @@ from flask import send_from_directory
 
 from werkzeug.utils import secure_filename
 
+from vision.ingredient_detector import detect_ingredients
+from ai.recipe_generator import generate_recipes
+
 import os
 import sqlite3
-import random
 from datetime import datetime
 
 app = Flask(__name__)
@@ -23,8 +25,23 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 
 @app.route("/")
+def start():
+    return render_template("login.html")
+
+
+@app.route("/home")
 def home():
     return render_template("index.html")
+
+
+@app.route("/login")
+def login():
+    return render_template("login.html")
+
+
+@app.route("/register")
+def register():
+    return render_template("register.html")
 
 
 @app.route("/favorites")
@@ -59,7 +76,6 @@ def saved():
     """)
 
     recipes = cursor.fetchall()
-
     connection.close()
 
     return render_template(
@@ -116,6 +132,7 @@ def generate():
     user_preference = request.form.get("user_preference", "").strip()
 
     image_filename = None
+    detected_ingredients = []
 
     if uploaded_file and uploaded_file.filename != "":
         filename = secure_filename(uploaded_file.filename)
@@ -126,10 +143,14 @@ def generate():
         )
 
         uploaded_file.save(save_path)
-
         image_filename = filename
 
-    if not image_filename and not user_preference:
+        detected_ingredients = detect_ingredients(save_path)
+
+    if not detected_ingredients and user_preference:
+        detected_ingredients = [user_preference]
+
+    if not detected_ingredients and not user_preference:
         return render_template(
             "results.html",
             error="Please upload an image or write what you would like to eat.",
@@ -138,80 +159,10 @@ def generate():
             image_filename=None
         )
 
-    if user_preference:
-        detected_ingredients = [
-            user_preference
-        ]
-    else:
-        detected_ingredients = [
-            "Tomato",
-            "Cheese",
-            "Chicken",
-            "Onion",
-            "Garlic"
-        ]
-
-    recipes = [
-        {
-            "name": "Chicken Pasta",
-            "ingredients": "Chicken, Pasta, Tomato Sauce, Garlic",
-            "steps": [
-                "Boil the pasta.",
-                "Cook the chicken.",
-                "Add sauce and garlic.",
-                "Mix everything together."
-            ],
-            "time": "20 min",
-            "difficulty": "Easy",
-            "calories": "520 kcal"
-        },
-        {
-            "name": "Cheese Omelette",
-            "ingredients": "Eggs, Cheese, Butter",
-            "steps": [
-                "Whisk the eggs.",
-                "Cook in butter.",
-                "Add cheese.",
-                "Fold and serve."
-            ],
-            "time": "10 min",
-            "difficulty": "Easy",
-            "calories": "350 kcal"
-        },
-        {
-            "name": "Garlic Chicken Rice",
-            "ingredients": "Chicken, Rice, Garlic, Onion",
-            "steps": [
-                "Cook the rice.",
-                "Fry chicken and onion.",
-                "Add garlic.",
-                "Serve together."
-            ],
-            "time": "30 min",
-            "difficulty": "Medium",
-            "calories": "610 kcal"
-        }
-    ]
-
-    if user_preference:
-        recipes.insert(
-            0,
-            {
-                "name": f"{user_preference.title()} Recipe",
-                "ingredients": user_preference,
-                "steps": [
-                    f"Prepare {user_preference}.",
-                    "Add simple ingredients.",
-                    "Cook until ready.",
-                    "Serve warm."
-                ],
-                "time": "15 min",
-                "difficulty": "Easy",
-                "calories": "400 kcal"
-            }
-        )
-
-    random.shuffle(recipes)
+    recipes = generate_recipes(
+        detected_ingredients,
+        user_preference=user_preference
+    )
 
     return render_template(
         "results.html",

@@ -20,7 +20,7 @@
 
         <div class="nav-links">
 
-            <a href="/" class="nav-home">
+            <a href="/home" class="nav-home">
                 Home
             </a>
 
@@ -36,15 +36,25 @@
                 History
             </a>
 
-            <button type="button"
-                    id="dark-mode-toggle"
-                    class="dark-toggle">
+            <a href="/login" class="nav-login">
+                Login
+            </a>
+
+            <a href="/register" class="nav-register">
+                Register
+            </a>
+
+            <button
+                type="button"
+                id="dark-mode-toggle"
+                class="dark-toggle">
                 🌙
             </button>
 
-            <button type="button"
-                    id="language-toggle"
-                    class="language-toggle">
+            <button
+                type="button"
+                id="language-toggle"
+                class="language-toggle">
                 RU
             </button>
 
@@ -99,7 +109,9 @@
                 placeholder="What would you like to eat?"
             >
 
-            <button type="submit" id="generate-btn">
+            <button
+                type="submit"
+                id="generate-btn">
                 Generate Recipes
             </button>
 
@@ -110,4 +122,5 @@
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 
 </body>
+
 </html>

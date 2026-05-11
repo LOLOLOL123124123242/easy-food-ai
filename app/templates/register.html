@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <title>Register</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <nav class="navbar">
+
+        <div class="logo">
+            🍽️ Easy Food
+        </div>
+
+        <div class="nav-links">
+
+            <a href="/login" class="nav-login">
+                Login
+            </a>
+
+            <a href="/register" class="nav-register">
+                Register
+            </a>
+
+            <button
+                type="button"
+                id="dark-mode-toggle"
+                class="dark-toggle">
+                🌙
+            </button>
+
+            <button
+                type="button"
+                id="language-toggle"
+                class="language-toggle">
+                RU
+            </button>
+
+        </div>
+
+    </nav>
+
+    <div class="container auth-container">
+
+        <div class="auth-card">
+
+            <h1 class="auth-title">
+                Create Account
+            </h1>
+
+            <p class="auth-subtitle">
+                Join Easy Food today
+            </p>
+
+            <form action="/home" method="GET" class="auth-form">
+
+                <input
+                    type="text"
+                    class="auth-input"
+                    placeholder="Full Name"
+                    required
+                >
+
+                <input
+                    type="email"
+                    class="auth-input"
+                    placeholder="Email"
+                    required
+                >
+
+                <input
+                    type="password"
+                    class="auth-input"
+                    placeholder="Password"
+                    required
+                >
+
+                <button
+                    type="submit"
+                    class="auth-btn">
+                    Register
+                </button>
+
+            </form>
+
+            <p class="auth-switch">
+
+                Already have an account?
+
+                <a href="/login">
+                    Login
+                </a>
+
+            </p>
+
+        </div>
+
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+
+</html>
