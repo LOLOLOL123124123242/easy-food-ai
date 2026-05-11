@@ -4,26 +4,32 @@ from app.ai.recipe_generator import generate_recipes
 
 def test_complete_ai_flow():
     """
-    Test full AI pipeline
-    Image -> ingredients
+    Test full AI pipeline:
+    image -> ingredients -> recipes
     """
 
-    # Fake image path for testing
     image_path = "app/uploads/food.jpg.jpg"
 
-    # Step 1: Detect ingredients
     ingredients = detect_ingredients(image_path)
 
-    print("Detected Ingredients")
-    print(ingredients)
+    print("\nDetected Ingredients:")
+    print(", ".join(ingredients))
 
-    # Step 2: Generate recipes
     recipes = generate_recipes(ingredients)
 
     print("\nGenerated Recipes:")
 
     for recipe in recipes:
-        print(f"- {recipe['name']}")
+        print("\n-------------------------")
+        print(f"Meal: {recipe['name']}")
+        print(f"Time: {recipe['time']}")
+        print(f"Difficulty: {recipe['difficulty']}")
+        print(f"Calories: {recipe['calories']}")
+        print("Ingredients:", ", ".join(recipe["ingredients"]))
+
+        print("Steps:")
+        for step in recipe["steps"]:
+            print(f"  - {step}")
 
 
 if __name__ == "__main__":

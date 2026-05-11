@@ -11,23 +11,52 @@ load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 
+def fallback_recipe(ingredients: List[str]) -> List[Dict[str, object]]:
+    """
+    Emergency fallback recipes if AI response fails.
+    """
+
+    return [
+        {
+            "name": "Mixed Vegetable Meal",
+            "ingredients": ingredients,
+            "time": "25 minutes",
+            "difficulty": "Easy",
+            "calories": "350 kcal",
+            "steps": [
+                "Wash all vegetables carefully.",
+                "Chop ingredients into small pieces.",
+                "Heat olive oil in a pan.",
+                "Cook vegetables until soft.",
+                "Season and serve warm."
+            ]
+        }
+    ]
+
+
 def generate_recipes(ingredients: List[str]) -> List[Dict[str, object]]:
     """
-    Generate realistic meal suggestions using detected ingredients.
+    Generate AI-powered recipes from detected ingredients.
     """
 
     if not ingredients:
-        return []
+        return fallback_recipe(ingredients)
 
     prompt = f"""
-    You are an AI cooking assistant.
+    You are a professional AI cooking assistant.
 
-    Detected ingredients:
+    Available ingredients:
     {", ".join(ingredients)}
 
-    Generate 4 different meals the user can cook using these ingredients.
+    Generate 4 realistic meals using these ingredients.
 
-    Return ONLY valid JSON in this exact format:
+    IMPORTANT:
+    - Return ONLY valid JSON
+    - No markdown
+    - No explanations
+    - No extra text
+
+    JSON format:
     [
       {{
         "name": "Recipe name",
@@ -35,38 +64,35 @@ def generate_recipes(ingredients: List[str]) -> List[Dict[str, object]]:
         "time": "25 minutes",
         "difficulty": "Easy",
         "calories": "350 kcal",
-        "steps": ["step 1", "step 2", "step 3"]
+        "steps": [
+          "Step 1",
+          "Step 2",
+          "Step 3"
+        ]
       }}
     ]
     """
 
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[
-            {"role": "user", "content": prompt}
-        ],
-        max_tokens=800,
-    )
-
-    text_response = response.choices[0].message.content
-
     try:
-        recipes = json.loads(text_response)
-    except json.JSONDecodeError:
-        recipes = [
-            {
-                "name": "AI Generated Mixed Meal",
-                "ingredients": ingredients,
-                "time": "25 minutes",
-                "difficulty": "Easy",
-                "calories": "350 kcal",
-                "steps": [
-                    "Wash and prepare all ingredients.",
-                    "Chop vegetables into small pieces.",
-                    "Cook ingredients in a pan with oil.",
-                    "Season and serve warm."
-                ]
-            }
-        ]
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.7,
+            max_tokens=1200,
+        )
 
-    return recipes
+        text_response = response.choices[0].message.content.strip()
+
+        recipes = json.loads(text_response)
+
+        if not isinstance(recipes, list):
+            return fallback_recipe(ingredients)
+
+        return recipes
+
+    except Exception as e:
+        print(f"\nAI Recipe Generation Error: {e}")
+
+        return fallback_recipe(ingredients)
