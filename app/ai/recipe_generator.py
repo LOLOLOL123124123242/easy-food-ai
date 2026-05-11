@@ -1,68 +1,111 @@
-"""
-Person 2 module: AI Recipe Generation
-
-Replace or improve this rule-based starter with OpenAI API or another AI model.
-"""
-
+import json
+import os
 from typing import List, Dict
 
+from dotenv import load_dotenv
+from openai import OpenAI
 
-def generate_recipes(ingredients: List[str]) -> List[Dict[str, object]]:
-    """
-    Generate meal ideas from detected ingredients.
 
-    Args:
-        ingredients: List of ingredient names.
+load_dotenv()
 
-    Returns:
-        List of recipe dictionaries.
-    """
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-    ingredient_text = ", ".join(ingredients)
 
-    # TODO: Replace this demo output with AI-generated recipes.
-    recipes = [
+def fallback_recipe(ingredients: List[str]) -> List[Dict[str, object]]:
+    return [
         {
-            "name": "Cheese Tomato Omelette",
-            "time": "15 minutes",
+            "name": "Simple Mixed Ingredient Meal",
+            "ingredients": ingredients,
+            "time": "25 minutes",
             "difficulty": "Easy",
-            "calories": "Approx. 320 kcal",
-            "ingredients": ingredient_text,
+            "calories": "350 kcal",
+            "category": "Quick Meal",
             "steps": [
-                "Chop the tomato and onion.",
-                "Beat the eggs in a bowl.",
-                "Cook onion and tomato in a pan for 3 minutes.",
-                "Add eggs and cheese.",
-                "Cook until ready and serve warm."
-            ]
-        },
-        {
-            "name": "Simple Egg and Cheese Sandwich",
-            "time": "10 minutes",
-            "difficulty": "Easy",
-            "calories": "Approx. 280 kcal",
-            "ingredients": ingredient_text,
-            "steps": [
-                "Cook the egg in a pan.",
-                "Add cheese on top while hot.",
-                "Add tomato and onion if desired.",
-                "Serve with bread or salad."
-            ]
-        },
-        {
-            "name": "Tomato Egg Skillet",
-            "time": "20 minutes",
-            "difficulty": "Medium",
-            "calories": "Approx. 350 kcal",
-            "ingredients": ingredient_text,
-            "steps": [
-                "Slice tomato and onion.",
-                "Cook them in a pan until soft.",
-                "Crack eggs over the vegetables.",
-                "Add cheese and cover the pan.",
-                "Cook until eggs are finished."
+                "Wash and prepare all ingredients.",
+                "Chop the ingredients into small pieces.",
+                "Heat olive oil in a pan.",
+                "Cook the ingredients until soft.",
+                "Season and serve warm."
             ]
         }
     ]
 
-    return recipes
+
+def generate_recipes(ingredients: List[str]) -> List[Dict[str, object]]:
+    if not ingredients:
+        return fallback_recipe(ingredients)
+
+    prompt = f"""
+You are a professional AI cooking assistant.
+
+Available ingredients:
+{", ".join(ingredients)}
+
+Generate 4 realistic meals using ONLY these ingredients.
+You may use basic cooking essentials like water, salt, black pepper, and olive oil.
+
+Do NOT invent additional ingredients.
+
+Each recipe must include:
+- Recipe name
+- Ingredients
+- Cooking time
+- Difficulty
+- Calories
+- Category
+- Cooking steps
+
+Allowed categories:
+- Healthy
+- Vegetarian
+- Low Calorie
+- High Protein
+- Quick Meal
+
+IMPORTANT:
+- Return ONLY valid JSON
+- No markdown
+- No explanations
+- No extra text
+
+JSON format:
+[
+  {{
+    "name": "Recipe name",
+    "ingredients": ["ingredient1", "ingredient2"],
+    "time": "25 minutes",
+    "difficulty": "Easy",
+    "calories": "350 kcal",
+    "category": "Healthy",
+    "steps": [
+      "Step 1",
+      "Step 2",
+      "Step 3"
+    ]
+  }}
+]
+"""
+
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.5,
+            max_tokens=1400,
+        )
+
+        text_response = response.choices[0].message.content.strip()
+
+        recipes = json.loads(text_response)
+
+        if not isinstance(recipes, list):
+            return fallback_recipe(ingredients)
+
+        return recipes
+
+    except Exception as e:
+        print(f"\nAI Recipe Generation Error: {e}")
+
+        return fallback_recipe(ingredients)
