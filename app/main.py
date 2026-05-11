@@ -1,27 +1,30 @@
-from flask import Flask
-from flask import render_template
-from flask import request
-from flask import redirect
-from flask import url_for
-from flask import send_from_directory
-
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory
 from werkzeug.utils import secure_filename
-
-from vision.ingredient_detector import detect_ingredients
-from ai.recipe_generator import generate_recipes
 
 import os
 import sqlite3
 from datetime import datetime
 
+from vision.ingredient_detector import detect_ingredients
+from ai.recipe_generator import generate_recipes
+
+
 app = Flask(__name__)
 
 UPLOAD_FOLDER = "uploads"
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
 
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+
+
+def allowed_file(filename):
+    return (
+        "." in filename
+        and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+    )
 
 
 @app.route("/")
@@ -78,10 +81,7 @@ def saved():
     recipes = cursor.fetchall()
     connection.close()
 
-    return render_template(
-        "saved.html",
-        recipes=recipes
-    )
+    return render_template("saved.html", recipes=recipes)
 
 
 @app.route("/save_recipe", methods=["POST"])
@@ -135,28 +135,34 @@ def generate():
     detected_ingredients = []
 
     if uploaded_file and uploaded_file.filename != "":
+        if not allowed_file(uploaded_file.filename):
+            return render_template(
+                "results.html",
+                error="Invalid file type. Please upload PNG, JPG, JPEG, or WEBP.",
+                ingredients=[],
+                recipes=[],
+                image_filename=None,
+                user_preference=user_preference
+            )
+
         filename = secure_filename(uploaded_file.filename)
-
-        save_path = os.path.join(
-            app.config["UPLOAD_FOLDER"],
-            filename
-        )
-
+        save_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
         uploaded_file.save(save_path)
-        image_filename = filename
 
+        image_filename = filename
         detected_ingredients = detect_ingredients(save_path)
 
     if not detected_ingredients and user_preference:
         detected_ingredients = [user_preference]
 
-    if not detected_ingredients and not user_preference:
+    if not detected_ingredients:
         return render_template(
             "results.html",
             error="Please upload an image or write what you would like to eat.",
             ingredients=[],
             recipes=[],
-            image_filename=None
+            image_filename=None,
+            user_preference=user_preference
         )
 
     recipes = generate_recipes(
@@ -169,16 +175,14 @@ def generate():
         ingredients=detected_ingredients,
         recipes=recipes,
         image_filename=image_filename,
+        user_preference=user_preference,
         error=None
     )
 
 
 @app.route("/uploads/<filename>")
 def uploaded_file(filename):
-    return send_from_directory(
-        app.config["UPLOAD_FOLDER"],
-        filename
-    )
+    return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
 
 
 if __name__ == "__main__":
