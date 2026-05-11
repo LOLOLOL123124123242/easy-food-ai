@@ -8,7 +8,14 @@
 <body>
     <div class="container">
         <h1>Generated Recipes</h1>
-
+        {% if image_filename %}
+    <img
+        src="{{ url_for('uploaded_file', filename=image_filename) }}"
+        class="preview-image"
+        style="display:block;"
+        alt="Uploaded ingredient image"
+    >
+{% endif %}
         {% if error %}
             <p class="error">{{ error }}</p>
         {% else %}

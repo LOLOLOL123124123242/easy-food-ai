@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_from_directory
 from pathlib import Path
 
 from vision.ingredient_detector import detect_ingredients
@@ -10,6 +10,12 @@ UPLOAD_FOLDER = BASE_DIR / "uploads"
 
 app = Flask(__name__)
 app.config["UPLOAD_FOLDER"] = str(UPLOAD_FOLDER)
+
+
+@app.route("/uploads/<filename>")
+def uploaded_file(filename):
+    return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
+
 
 init_db()
 
@@ -41,6 +47,7 @@ def generate():
         "results.html",
         ingredients=ingredients,
         recipes=recipes,
+        image_filename=image.filename,
         error=None
     )
 
