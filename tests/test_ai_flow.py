@@ -9,7 +9,7 @@ def test_complete_ai_flow():
     """
 
     # Fake image path for testing
-    image_path = "sample_food_image.jpg"
+    image_path = "app/uploads/food.jpg.jpg"
 
     # Step 1: Detect ingredients
     ingredients = detect_ingredients(image_path)
