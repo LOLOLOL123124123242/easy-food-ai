@@ -44,11 +44,17 @@
                 Register
             </a>
 
-            <button type="button" id="dark-mode-toggle" class="dark-toggle">
+            <button
+                type="button"
+                id="dark-mode-toggle"
+                class="dark-toggle">
                 🌙
             </button>
 
-            <button type="button" id="language-toggle" class="language-toggle">
+            <button
+                type="button"
+                id="language-toggle"
+                class="language-toggle">
                 RU
             </button>
 
@@ -63,12 +69,14 @@
         </h1>
 
         {% if image_filename %}
+
             <img
                 src="{{ url_for('uploaded_file', filename=image_filename) }}"
                 class="preview-image"
                 style="display:block;"
                 alt="Uploaded ingredient image"
             >
+
         {% endif %}
 
         {% if error %}
@@ -86,9 +94,11 @@
             <div class="ingredients-list">
 
                 {% for ingredient in ingredients %}
+
                     <div class="ingredient-badge">
                         {{ ingredient }}
                     </div>
+
                 {% endfor %}
 
             </div>
@@ -108,19 +118,31 @@
 
                 <div class="filter-buttons">
 
-                    <button type="button" class="filter-btn active" data-filter="all">
+                    <button
+                        type="button"
+                        class="filter-btn active"
+                        data-filter="all">
                         All
                     </button>
 
-                    <button type="button" class="filter-btn" data-filter="quick">
+                    <button
+                        type="button"
+                        class="filter-btn"
+                        data-filter="quick">
                         ⚡ Quick
                     </button>
 
-                    <button type="button" class="filter-btn" data-filter="easy">
+                    <button
+                        type="button"
+                        class="filter-btn"
+                        data-filter="easy">
                         🥗 Easy
                     </button>
 
-                    <button type="button" class="filter-btn" data-filter="protein">
+                    <button
+                        type="button"
+                        class="filter-btn"
+                        data-filter="protein">
                         🍗 Protein
                     </button>
 
@@ -142,7 +164,9 @@
                             {{ recipe.name }}
                         </h3>
 
-                        <button type="button" class="view-recipe-btn">
+                        <button
+                            type="button"
+                            class="view-recipe-btn">
                             View Recipe
                         </button>
 
@@ -150,11 +174,16 @@
 
                     <div class="recipe-actions">
 
-                        <button type="button" class="favorite-btn">
+                        <button
+                            type="button"
+                            class="favorite-btn">
+
                             🤍
+
                             <span class="favorite-text">
                                 Favorite
                             </span>
+
                         </button>
 
                         <form class="save-form">
@@ -168,13 +197,13 @@
                             <input
                                 type="hidden"
                                 name="ingredients"
-                                value="{% if recipe.ingredients is string %}{{ recipe.ingredients }}{% else %}{{ recipe.ingredients | join(', ') }}{% endif %}"
+                                value="{{ recipe.ingredients }}"
                             >
 
                             <input
                                 type="hidden"
                                 name="steps"
-                                value="{% if recipe.steps is string %}{{ recipe.steps }}{% else %}{{ recipe.steps | join(' | ') }}{% endif %}"
+                                value="{{ recipe.steps | join(' | ') }}"
                             >
 
                             <button
@@ -189,78 +218,85 @@
                     </div>
 
                     <p>
+
                         <strong class="time-text">
                             Time:
                         </strong>
+
                         {{ recipe.time }}
+
                     </p>
 
                     <p>
+
                         <strong class="difficulty-text">
                             Difficulty:
                         </strong>
-                        {{ recipe.difficulty }}
-                    </p>
 
-                    {% if recipe.category %}
-                        <p>
-                            <strong>
-                                Category:
-                            </strong>
-                            {{ recipe.category }}
-                        </p>
-                    {% endif %}
+                        {{ recipe.difficulty }}
+
+                    </p>
 
                     <div class="nutrition-grid">
 
                         <div class="nutrition-card">
+
                             <strong>
                                 {{ recipe.calories }}
                             </strong>
+
                             <span class="calories-text">
                                 Calories
                             </span>
+
                         </div>
 
                         <div class="nutrition-card">
+
                             <strong>
-                                {{ recipe.protein }}
+                                25g
                             </strong>
+
                             <span class="protein-text">
                                 Protein
                             </span>
+
                         </div>
 
                         <div class="nutrition-card">
+
                             <strong>
-                                {{ recipe.carbs }}
+                                40g
                             </strong>
+
                             <span class="carbs-text">
                                 Carbs
                             </span>
+
                         </div>
 
                         <div class="nutrition-card">
+
                             <strong>
-                                {{ recipe.fat }}
+                                12g
                             </strong>
+
                             <span class="fat-text">
                                 Fat
                             </span>
+
                         </div>
 
                     </div>
 
                     <p>
+
                         <strong class="ingredients-text">
                             Ingredients:
                         </strong>
 
-                        {% if recipe.ingredients is string %}
-                            {{ recipe.ingredients }}
-                        {% else %}
-                            {{ recipe.ingredients | join(', ') }}
-                        {% endif %}
+                        {{ recipe.ingredients }}
+
                     </p>
 
                     <h4 class="steps-text">
@@ -268,13 +304,15 @@
                     </h4>
 
                     <ol>
-                        {% if recipe.steps is string %}
-                            <li>{{ recipe.steps }}</li>
-                        {% else %}
-                            {% for step in recipe.steps %}
-                                <li>{{ step }}</li>
-                            {% endfor %}
-                        {% endif %}
+
+                        {% for step in recipe.steps %}
+
+                            <li>
+                                {{ step }}
+                            </li>
+
+                        {% endfor %}
+
                     </ol>
 
                 </div>
@@ -289,7 +327,9 @@
                 Recently Viewed
             </h2>
 
-            <div id="recently-viewed-list"></div>
+            <div id="recently-viewed-list">
+
+            </div>
 
         </div>
 
@@ -303,11 +343,15 @@
 
         <div class="recipe-modal-content">
 
-            <button class="close-modal" id="close-modal">
+            <button
+                class="close-modal"
+                id="close-modal">
                 ✖
             </button>
 
-            <div id="modal-body"></div>
+            <div id="modal-body">
+
+            </div>
 
         </div>
 

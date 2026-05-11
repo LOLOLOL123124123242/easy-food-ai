@@ -20,7 +20,7 @@
 
         <div class="nav-links">
 
-            <a href="/" class="nav-home">
+            <a href="/home" class="nav-home">
                 Home
             </a>
 
@@ -36,17 +36,25 @@
                 History
             </a>
 
-            <button 
-                    type="button"
-                    id="dark-mode-toggle"
-                    class="dark-toggle">
+            <a href="/login" class="nav-login">
+                Login
+            </a>
+
+            <a href="/register" class="nav-register">
+                Register
+            </a>
+
+            <button
+                type="button"
+                id="dark-mode-toggle"
+                class="dark-toggle">
                 🌙
             </button>
 
-            <button 
-                    type="button"
-                    id="language-toggle"
-                    class="language-toggle">
+            <button
+                type="button"
+                id="language-toggle"
+                class="language-toggle">
                 RU
             </button>
 
@@ -60,42 +68,44 @@
             Saved Recipes
         </h1>
 
-        {% if message %}
-            <div class="toast">
-                ✅ {{ message }}
-            </div>
-        {% endif %}
-
         {% if recipes %}
 
             {% for recipe in recipes %}
 
                 <div class="recipe-card">
 
-                    <h3>{{ recipe[1] }}</h3>
+                    <h3>
+                        {{ recipe[1] }}
+                    </h3>
 
                     <p>
+
                         <strong class="ingredients-text">
                             Ingredients:
                         </strong>
 
                         {{ recipe[2] }}
+
                     </p>
 
                     <p>
+
                         <strong class="steps-text">
                             Steps:
                         </strong>
 
                         {{ recipe[3] }}
+
                     </p>
 
                     <p>
+
                         <strong class="saved-at-text">
                             Saved at:
                         </strong>
 
                         {{ recipe[4] }}
+
                     </p>
 
                     <button class="delete-recipe-btn">
@@ -114,7 +124,7 @@
 
         {% endif %}
 
-        <a href="/" class="back-link">
+        <a href="/home" class="back-link">
             Back
         </a>
 
@@ -123,4 +133,5 @@
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 
 </body>
+
 </html>
