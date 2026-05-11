@@ -1,15 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title>Recipe Saved</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <title>Saved Recipes</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
 </head>
+
 <body>
+
+    <nav class="navbar">
+
+        <div class="logo">
+            🍽️ Easy Food
+        </div>
+
+        <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/saved">Saved Recipes</a>
+    <button type="button" id="dark-mode-toggle" class="dark-toggle">
+        🌙
+    </button>
+</div>
+    </nav>
+
     <div class="container">
-        <h1>Recipe Saved</h1>
-        <p>{{ recipe_name }} was saved successfully.</p>
-        <a href="/">Back to Home</a>
+
+        <h1>Saved Recipes</h1>
+
+     {% if message %}
+    <div class="toast">
+        ✅ {{ message }}
     </div>
+{% endif %}
+
+        {% if recipes %}
+
+            {% for recipe in recipes %}
+
+                <div class="recipe-card">
+
+                    <h3>{{ recipe[1] }}</h3>
+
+                    <p>
+                        <strong>Ingredients:</strong>
+                        {{ recipe[2] }}
+                    </p>
+
+                    <p>
+                        <strong>Steps:</strong>
+                        {{ recipe[3] }}
+                    </p>
+
+                    <p>
+                        <strong>Saved at:</strong>
+                        {{ recipe[4] }}
+                    </p>
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <p>No saved recipes yet.</p>
+
+        {% endif %}
+
+        <a href="/">Back to Home</a>
+
+    </div>
+
 </body>
 </html>

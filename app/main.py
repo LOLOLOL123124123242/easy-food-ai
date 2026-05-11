@@ -1,15 +1,21 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_from_directory
 from pathlib import Path
 
 from vision.ingredient_detector import detect_ingredients
 from ai.recipe_generator import generate_recipes
-from database.db import init_db, save_recipe
+from database.db import init_db, save_recipe, get_saved_recipes
 
 BASE_DIR = Path(__file__).resolve().parent
 UPLOAD_FOLDER = BASE_DIR / "uploads"
 
 app = Flask(__name__)
 app.config["UPLOAD_FOLDER"] = str(UPLOAD_FOLDER)
+
+
+@app.route("/uploads/<filename>")
+def uploaded_file(filename):
+    return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
+
 
 init_db()
 
@@ -41,6 +47,7 @@ def generate():
         "results.html",
         ingredients=ingredients,
         recipes=recipes,
+        image_filename=image.filename,
         error=None
     )
 
@@ -53,9 +60,22 @@ def save():
 
     save_recipe(recipe_name, ingredients, steps)
 
+    recipes = get_saved_recipes()
+
     return render_template(
         "saved.html",
-        recipe_name=recipe_name
+        recipes=recipes,
+        message=f"{recipe_name} was saved successfully."
+    )
+
+
+@app.route("/saved")
+def saved_recipes():
+    recipes = get_saved_recipes()
+
+    return render_template(
+        "saved.html",
+        recipes=recipes
     )
 
 
