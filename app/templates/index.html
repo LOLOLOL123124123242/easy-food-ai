@@ -6,21 +6,54 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
+
+    <nav class="navbar">
+        <div class="logo">🍽️ Easy Food</div>
+
+        <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/saved">Saved Recipes</a>
+    <button type="button" id="dark-mode-toggle" class="dark-toggle">
+        🌙
+    </button>
+</div>
+    </nav>
+
     <div class="container">
         <h1>Easy Food</h1>
+
         <p>Upload a photo of your ingredients and get meal ideas.</p>
 
         <form action="/generate" method="POST" enctype="multipart/form-data">
-            <label class="upload-box">
-    <span class="upload-icon">📷</span>
-    <span id="file-label">Choose ingredient image</span>
-    <input type="file" name="ingredient_image" accept="image/*" required>
-</label>
 
-<button type="submit" id="generate-btn">Generate Recipes</button>
+            <label class="upload-box">
+                <span class="upload-icon">📷</span>
+
+                <span id="file-label">
+                    Drag & Drop ingredient image here
+                </span>
+
+                <br>
+                <small>
+                    or click to browse files
+                </small>
+
+                <input
+                    type="file"
+                    name="ingredient_image"
+                    accept="image/*"
+                    required
+                >
+            </label>
+
+            <button type="submit" id="generate-btn">
+                Generate Recipes
+            </button>
+
         </form>
     </div>
 
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
 </body>
 </html>

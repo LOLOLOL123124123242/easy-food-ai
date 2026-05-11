@@ -3,39 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <title>Generated Recipes</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
 </head>
+
 <body>
+
+    <nav class="navbar">
+        <div class="logo">🍽️ Easy Food</div>
+
+        <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/saved">Saved Recipes</a>
+    <button type="button" id="dark-mode-toggle" class="dark-toggle">
+        🌙
+    </button>
+</div>
+    </nav>
+
     <div class="container">
+
         <h1>Generated Recipes</h1>
+
         {% if image_filename %}
-    <img
-        src="{{ url_for('uploaded_file', filename=image_filename) }}"
-        class="preview-image"
-        style="display:block;"
-        alt="Uploaded ingredient image"
-    >
-{% endif %}
+            <img
+                src="{{ url_for('uploaded_file', filename=image_filename) }}"
+                class="preview-image"
+                style="display:block;"
+                alt="Uploaded ingredient image"
+            >
+        {% endif %}
+
         {% if error %}
+
             <p class="error">{{ error }}</p>
+
         {% else %}
+
             <h2>Detected Ingredients</h2>
-            <ul>
+
+            <div class="ingredients-list">
+
                 {% for ingredient in ingredients %}
-                    <li>{{ ingredient }}</li>
+
+                    <div class="ingredient-badge">
+                        {{ ingredient }}
+                    </div>
+
                 {% endfor %}
-            </ul>
+
+            </div>
 
             <h2>Meal Suggestions</h2>
+
             {% for recipe in recipes %}
+
                 <div class="recipe-card">
+
                     <h3>{{ recipe.name }}</h3>
-                    <p><strong>Time:</strong> {{ recipe.time }}</p>
-                    <p><strong>Difficulty:</strong> {{ recipe.difficulty }}</p>
-                    <p><strong>Calories:</strong> {{ recipe.calories }}</p>
-                    <p><strong>Ingredients:</strong> {{ recipe.ingredients }}</p>
+
+                    <p>
+                        <strong>Time:</strong>
+                        {{ recipe.time }}
+                    </p>
+
+                    <p>
+                        <strong>Difficulty:</strong>
+                        {{ recipe.difficulty }}
+                    </p>
+
+                    <div class="nutrition-grid">
+
+                        <div class="nutrition-card">
+                            <strong>{{ recipe.calories }}</strong>
+                            <span>Calories</span>
+                        </div>
+
+                        <div class="nutrition-card">
+                            <strong>25g</strong>
+                            <span>Protein</span>
+                        </div>
+
+                        <div class="nutrition-card">
+                            <strong>40g</strong>
+                            <span>Carbs</span>
+                        </div>
+
+                        <div class="nutrition-card">
+                            <strong>12g</strong>
+                            <span>Fat</span>
+                        </div>
+
+                    </div>
+
+                    <p>
+                        <strong>Ingredients:</strong>
+                        {{ recipe.ingredients }}
+                    </p>
 
                     <h4>Steps</h4>
+
                     <ol>
                         {% for step in recipe.steps %}
                             <li>{{ step }}</li>
@@ -43,16 +111,40 @@
                     </ol>
 
                     <form action="/save" method="POST">
-                        <input type="hidden" name="recipe_name" value="{{ recipe.name }}">
-                        <input type="hidden" name="ingredients" value="{{ recipe.ingredients }}">
-                        <input type="hidden" name="steps" value="{{ recipe.steps | join(' | ') }}">
-                        <button type="submit">Save Recipe</button>
+
+                        <input
+                            type="hidden"
+                            name="recipe_name"
+                            value="{{ recipe.name }}"
+                        >
+
+                        <input
+                            type="hidden"
+                            name="ingredients"
+                            value="{{ recipe.ingredients }}"
+                        >
+
+                        <input
+                            type="hidden"
+                            name="steps"
+                            value="{{ recipe.steps | join(' | ') }}"
+                        >
+
+                        <button type="submit">
+                            Save Recipe
+                        </button>
+
                     </form>
+
                 </div>
+
             {% endfor %}
+
         {% endif %}
 
         <a href="/">Back</a>
+
     </div>
+
 </body>
 </html>

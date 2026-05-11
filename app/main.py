@@ -3,7 +3,7 @@ from pathlib import Path
 
 from vision.ingredient_detector import detect_ingredients
 from ai.recipe_generator import generate_recipes
-from database.db import init_db, save_recipe
+from database.db import init_db, save_recipe, get_saved_recipes
 
 BASE_DIR = Path(__file__).resolve().parent
 UPLOAD_FOLDER = BASE_DIR / "uploads"
@@ -60,9 +60,22 @@ def save():
 
     save_recipe(recipe_name, ingredients, steps)
 
+    recipes = get_saved_recipes()
+
     return render_template(
         "saved.html",
-        recipe_name=recipe_name
+        recipes=recipes,
+        message=f"{recipe_name} was saved successfully."
+    )
+
+
+@app.route("/saved")
+def saved_recipes():
+    recipes = get_saved_recipes()
+
+    return render_template(
+        "saved.html",
+        recipes=recipes
     )
 
 
