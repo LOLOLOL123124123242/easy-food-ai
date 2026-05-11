@@ -1,25 +1,30 @@
-from flask import Flask
-from flask import render_template
-from flask import request
-from flask import redirect
-from flask import url_for
-from flask import send_from_directory
-
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory
 from werkzeug.utils import secure_filename
 
 import os
 import sqlite3
-import random
 from datetime import datetime
+
+from vision.ingredient_detector import detect_ingredients
+from ai.recipe_generator import generate_recipes
+
 
 app = Flask(__name__)
 
 UPLOAD_FOLDER = "uploads"
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
 
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+
+
+def allowed_file(filename):
+    return (
+        "." in filename
+        and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+    )
 
 
 @app.route("/")
@@ -59,13 +64,9 @@ def saved():
     """)
 
     recipes = cursor.fetchall()
-
     connection.close()
 
-    return render_template(
-        "saved.html",
-        recipes=recipes
-    )
+    return render_template("saved.html", recipes=recipes)
 
 
 @app.route("/save_recipe", methods=["POST"])
@@ -116,118 +117,57 @@ def generate():
     user_preference = request.form.get("user_preference", "").strip()
 
     image_filename = None
+    detected_ingredients = []
 
     if uploaded_file and uploaded_file.filename != "":
+        if not allowed_file(uploaded_file.filename):
+            return render_template(
+                "results.html",
+                error="Invalid file type. Please upload PNG, JPG, JPEG, or WEBP.",
+                ingredients=[],
+                recipes=[],
+                image_filename=None,
+                user_preference=user_preference
+            )
+
         filename = secure_filename(uploaded_file.filename)
-
-        save_path = os.path.join(
-            app.config["UPLOAD_FOLDER"],
-            filename
-        )
-
+        save_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
         uploaded_file.save(save_path)
 
         image_filename = filename
+        detected_ingredients = detect_ingredients(save_path)
 
-    if not image_filename and not user_preference:
+    if not detected_ingredients and user_preference:
+        detected_ingredients = [user_preference]
+
+    if not detected_ingredients:
         return render_template(
             "results.html",
             error="Please upload an image or write what you would like to eat.",
             ingredients=[],
             recipes=[],
-            image_filename=None
+            image_filename=None,
+            user_preference=user_preference
         )
 
-    if user_preference:
-        detected_ingredients = [
-            user_preference
-        ]
-    else:
-        detected_ingredients = [
-            "Tomato",
-            "Cheese",
-            "Chicken",
-            "Onion",
-            "Garlic"
-        ]
-
-    recipes = [
-        {
-            "name": "Chicken Pasta",
-            "ingredients": "Chicken, Pasta, Tomato Sauce, Garlic",
-            "steps": [
-                "Boil the pasta.",
-                "Cook the chicken.",
-                "Add sauce and garlic.",
-                "Mix everything together."
-            ],
-            "time": "20 min",
-            "difficulty": "Easy",
-            "calories": "520 kcal"
-        },
-        {
-            "name": "Cheese Omelette",
-            "ingredients": "Eggs, Cheese, Butter",
-            "steps": [
-                "Whisk the eggs.",
-                "Cook in butter.",
-                "Add cheese.",
-                "Fold and serve."
-            ],
-            "time": "10 min",
-            "difficulty": "Easy",
-            "calories": "350 kcal"
-        },
-        {
-            "name": "Garlic Chicken Rice",
-            "ingredients": "Chicken, Rice, Garlic, Onion",
-            "steps": [
-                "Cook the rice.",
-                "Fry chicken and onion.",
-                "Add garlic.",
-                "Serve together."
-            ],
-            "time": "30 min",
-            "difficulty": "Medium",
-            "calories": "610 kcal"
-        }
-    ]
-
-    if user_preference:
-        recipes.insert(
-            0,
-            {
-                "name": f"{user_preference.title()} Recipe",
-                "ingredients": user_preference,
-                "steps": [
-                    f"Prepare {user_preference}.",
-                    "Add simple ingredients.",
-                    "Cook until ready.",
-                    "Serve warm."
-                ],
-                "time": "15 min",
-                "difficulty": "Easy",
-                "calories": "400 kcal"
-            }
-        )
-
-    random.shuffle(recipes)
+    recipes = generate_recipes(
+        detected_ingredients,
+        user_preference=user_preference
+    )
 
     return render_template(
         "results.html",
         ingredients=detected_ingredients,
         recipes=recipes,
         image_filename=image_filename,
+        user_preference=user_preference,
         error=None
     )
 
 
 @app.route("/uploads/<filename>")
 def uploaded_file(filename):
-    return send_from_directory(
-        app.config["UPLOAD_FOLDER"],
-        filename
-    )
+    return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
 
 
 if __name__ == "__main__":

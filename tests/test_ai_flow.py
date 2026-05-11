@@ -10,12 +10,20 @@ def test_complete_ai_flow():
 
     image_path = "app/uploads/food.jpg.jpg"
 
+    user_preference = "healthy low calorie"
+
     ingredients = detect_ingredients(image_path)
 
     print("\nDetected Ingredients:")
     print(", ".join(ingredients))
 
-    recipes = generate_recipes(ingredients)
+    recipes = generate_recipes(
+        ingredients,
+        user_preference=user_preference
+    )
+
+    print("\nUser Preference:")
+    print(user_preference)
 
     print("\nGenerated Recipes:")
 
@@ -25,6 +33,9 @@ def test_complete_ai_flow():
         print(f"Time: {recipe['time']}")
         print(f"Difficulty: {recipe['difficulty']}")
         print(f"Calories: {recipe['calories']}")
+        print(f"Protein: {recipe.get('protein', 'N/A')}")
+        print(f"Carbs: {recipe.get('carbs', 'N/A')}")
+        print(f"Fat: {recipe.get('fat', 'N/A')}")
         print(f"Category: {recipe.get('category', 'General')}")
         print("Ingredients:", ", ".join(recipe["ingredients"]))
 
