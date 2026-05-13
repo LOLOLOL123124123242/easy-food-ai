@@ -25,8 +25,8 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 
 @app.route("/")
-def start():
-    return render_template("login.html")
+def index():
+    return redirect(url_for("login"))
 
 
 @app.route("/home")
