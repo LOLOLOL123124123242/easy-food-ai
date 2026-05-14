@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
 
-    <title>Generated Recipes</title>
+    <title>Login</title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='css/style.css') }}">
@@ -19,22 +19,6 @@
         </div>
 
         <div class="nav-links">
-
-            <a href="/home" class="nav-home">
-                Home
-            </a>
-
-            <a href="/saved" class="nav-saved">
-                Saved Recipes
-            </a>
-
-            <a href="/favorites" class="nav-favorites">
-                Favorites
-            </a>
-
-            <a href="/history" class="nav-history">
-                History
-            </a>
 
             <a href="/login" class="nav-login">
                 Login
@@ -62,296 +46,63 @@
 
     </nav>
 
-    <div class="container">
+    <div class="container auth-container">
 
-        <h1 class="results-title">
-            Generated Recipes
-        </h1>
+        <div class="auth-card">
 
-        {% if image_filename %}
+            <h1 class="auth-title">
+                Easy Food
+            </h1>
 
-            <img
-                src="{{ url_for('uploaded_file', filename=image_filename) }}"
-                class="preview-image"
-                style="display:block;"
-                alt="Uploaded ingredient image"
-            >
-
-        {% endif %}
-
-        {% if error %}
-
-            <p class="error">
-                {{ error }}
+            <p class="auth-subtitle">
+                Login to continue using Easy Food
             </p>
 
-        {% else %}
-
-            <h2 class="ingredients-title">
-                Detected Ingredients
-            </h2>
-
-            <div class="ingredients-list">
-
-                {% for ingredient in ingredients %}
-
-                    <div class="ingredient-badge">
-                        {{ ingredient }}
-                    </div>
-
-                {% endfor %}
-
-            </div>
-
-            <h2 class="meals-title">
-                Meal Suggestions
-            </h2>
-
-            <div class="recipe-tools">
+            <form id="login-form" class="auth-form">
 
                 <input
                     type="text"
-                    id="recipe-search"
-                    class="recipe-search"
-                    placeholder="Search recipes..."
+                    id="login-username"
+                    class="auth-input"
+                    placeholder="Username"
+                    minlength="2"
+                    required
                 >
 
-                <div class="filter-buttons">
-
-                    <button
-                        type="button"
-                        class="filter-btn active"
-                        data-filter="all">
-                        All
-                    </button>
-
-                    <button
-                        type="button"
-                        class="filter-btn"
-                        data-filter="quick">
-                        ⚡ Quick
-                    </button>
-
-                    <button
-                        type="button"
-                        class="filter-btn"
-                        data-filter="easy">
-                        🥗 Easy
-                    </button>
-
-                    <button
-                        type="button"
-                        class="filter-btn"
-                        data-filter="protein">
-                        🍗 Protein
-                    </button>
-
-                </div>
-
-            </div>
-
-            {% for recipe in recipes %}
-
-                <div
-                    class="recipe-card"
-                    data-time="{{ recipe.time }}"
-                    data-difficulty="{{ recipe.difficulty }}"
+                <input
+                    type="email"
+                    id="login-email"
+                    class="auth-input"
+                    placeholder="Email"
+                    required
                 >
 
-                    <div class="recipe-header">
-
-                        <h3>
-                            {{ recipe.name }}
-                        </h3>
-
-                        <button
-                            type="button"
-                            class="view-recipe-btn">
-                            View Recipe
-                        </button>
-
-                    </div>
-
-                    <div class="recipe-actions">
-
-                        <button
-                            type="button"
-                            class="favorite-btn">
-
-                            🤍
-
-                            <span class="favorite-text">
-                                Favorite
-                            </span>
-
-                        </button>
-
-                        <form class="save-form">
-
-                            <input
-                                type="hidden"
-                                name="recipe_name"
-                                value="{{ recipe.name }}"
-                            >
-
-                            <input
-                                type="hidden"
-                                name="ingredients"
-                                value="{{ recipe.ingredients }}"
-                            >
-
-                            <input
-                                type="hidden"
-                                name="steps"
-                                value="{{ recipe.steps | join(' | ') }}"
-                            >
-
-                            <button
-                                type="submit"
-                                class="save-bookmark-btn"
-                                title="Save Recipe">
-                                🔖
-                            </button>
-
-                        </form>
-
-                    </div>
-
-                    <p>
-
-                        <strong class="time-text">
-                            Time:
-                        </strong>
-
-                        {{ recipe.time }}
-
-                    </p>
-
-                    <p>
-
-                        <strong class="difficulty-text">
-                            Difficulty:
-                        </strong>
-
-                        {{ recipe.difficulty }}
-
-                    </p>
-
-                    <div class="nutrition-grid">
-
-                        <div class="nutrition-card">
-
-                            <strong>
-                                {{ recipe.calories }}
-                            </strong>
-
-                            <span class="calories-text">
-                                Calories
-                            </span>
-
-                        </div>
-
-                        <div class="nutrition-card">
-
-                            <strong>
-                                25g
-                            </strong>
-
-                            <span class="protein-text">
-                                Protein
-                            </span>
-
-                        </div>
-
-                        <div class="nutrition-card">
-
-                            <strong>
-                                40g
-                            </strong>
-
-                            <span class="carbs-text">
-                                Carbs
-                            </span>
-
-                        </div>
-
-                        <div class="nutrition-card">
-
-                            <strong>
-                                12g
-                            </strong>
-
-                            <span class="fat-text">
-                                Fat
-                            </span>
-
-                        </div>
-
-                    </div>
-
-                    <p>
-
-                        <strong class="ingredients-text">
-                            Ingredients:
-                        </strong>
-
-                        {{ recipe.ingredients }}
-
-                    </p>
-
-                    <h4 class="steps-text">
-                        Steps
-                    </h4>
-
-                    <ol>
-
-                        {% for step in recipe.steps %}
-
-                            <li>
-                                {{ step }}
-                            </li>
-
-                        {% endfor %}
-
-                    </ol>
-
-                </div>
-
-            {% endfor %}
-
-        {% endif %}
-
-        <div class="recently-viewed-section">
-
-            <h2 class="recently-viewed-title">
-                Recently Viewed
-            </h2>
-
-            <div id="recently-viewed-list">
-
-            </div>
-
-        </div>
-
-        <a href="/home" class="back-link">
-            Back
-        </a>
-
-    </div>
-
-    <div class="recipe-modal" id="recipe-modal">
-
-        <div class="recipe-modal-content">
-
-            <button
-                class="close-modal"
-                id="close-modal">
-                ✖
-            </button>
-
-            <div id="modal-body">
-
-            </div>
+                <input
+                    type="password"
+                    id="login-password"
+                    class="auth-input"
+                    placeholder="Password"
+                    minlength="6"
+                    required
+                >
+
+                <button
+                    type="submit"
+                    class="auth-btn">
+                    Login
+                </button>
+
+            </form>
+
+            <p class="auth-switch">
+
+                Don't have an account?
+
+                <a href="/register">
+                    Register
+                </a>
+
+            </p>
 
         </div>
 

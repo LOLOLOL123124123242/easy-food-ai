@@ -529,3 +529,122 @@ if (modal) {
         }
     });
 }
+const loginForm =
+    document.getElementById("login-form");
+
+if (loginForm) {
+
+    loginForm.addEventListener("submit", function(event) {
+
+        event.preventDefault();
+
+        const username =
+    document.getElementById("login-username").value;
+
+        localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("username", username);
+
+        window.location.href = "/home";
+    });
+}
+
+const registerForm =
+    document.getElementById("register-form");
+
+if (registerForm) {
+
+    registerForm.addEventListener("submit", function(event) {
+
+        event.preventDefault();
+
+        const username =
+            document.getElementById("register-username").value;
+
+        localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("username", username);
+
+        window.location.href = "/home";
+    });
+}
+function updateAuthNavbar() {
+    const isLoggedIn =
+        localStorage.getItem("isLoggedIn");
+
+    const username =
+        localStorage.getItem("username");
+
+    const navLogin =
+        document.querySelector(".nav-login");
+
+    const navRegister =
+        document.querySelector(".nav-register");
+
+    const navLinks =
+        document.querySelector(".nav-links");
+
+    if (
+        isLoggedIn === "true" &&
+        username &&
+        navLinks
+    ) {
+        if (navLogin) {
+            navLogin.style.display = "none";
+        }
+
+        if (navRegister) {
+            navRegister.style.display = "none";
+        }
+
+        if (!document.querySelector(".nav-user")) {
+            const userText =
+                document.createElement("span");
+
+            userText.className = "nav-user";
+            userText.innerText = "Hi, " + username;
+
+            const logoutBtn =
+                document.createElement("button");
+
+            logoutBtn.className = "logout-btn";
+            logoutBtn.innerText = "Logout";
+
+            logoutBtn.addEventListener("click", function() {
+                localStorage.removeItem("isLoggedIn");
+                localStorage.removeItem("username");
+
+                window.location.href = "/login";
+            });
+
+            navLinks.insertBefore(
+                userText,
+                navLinks.querySelector("#dark-mode-toggle")
+            );
+
+            navLinks.insertBefore(
+                logoutBtn,
+                navLinks.querySelector("#dark-mode-toggle")
+            );
+        }
+    }
+}
+
+updateAuthNavbar();
+const protectedPages = [
+    "/home",
+    "/saved",
+    "/favorites",
+    "/history"
+];
+
+const currentPath =
+    window.location.pathname;
+
+const isLoggedIn =
+    localStorage.getItem("isLoggedIn");
+
+if (
+    protectedPages.includes(currentPath) &&
+    isLoggedIn !== "true"
+) {
+    window.location.href = "/login";
+}
