@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <title>Saved Recipes</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <nav class="navbar">
+
+        <div class="logo">
+            🍽️ Easy Food
+        </div>
+
+        <div class="nav-links">
+
+            <a href="/" class="nav-home">
+                Home
+            </a>
+
+            <a href="/saved" class="nav-saved">
+                Saved Recipes
+            </a>
+
+            <a href="/favorites" class="nav-favorites">
+                Favorites
+            </a>
+
+            <a href="/history" class="nav-history">
+                History
+            </a>
+
+            <button 
+                    type="button"
+                    id="dark-mode-toggle"
+                    class="dark-toggle">
+                🌙
+            </button>
+
+            <button 
+                    type="button"
+                    id="language-toggle"
+                    class="language-toggle">
+                RU
+            </button>
+
+        </div>
+
+    </nav>
+
+    <div class="container">
+
+        <h1 class="saved-page-title">
+            Saved Recipes
+        </h1>
+
+        {% if message %}
+            <div class="toast">
+                ✅ {{ message }}
+            </div>
+        {% endif %}
+
+        {% if recipes %}
+
+            {% for recipe in recipes %}
+
+                <div class="recipe-card">
+
+                    <h3>{{ recipe[1] }}</h3>
+
+                    <p>
+                        <strong class="ingredients-text">
+                            Ingredients:
+                        </strong>
+
+                        {{ recipe[2] }}
+                    </p>
+
+                    <p>
+                        <strong class="steps-text">
+                            Steps:
+                        </strong>
+
+                        {{ recipe[3] }}
+                    </p>
+
+                    <p>
+                        <strong class="saved-at-text">
+                            Saved at:
+                        </strong>
+
+                        {{ recipe[4] }}
+                    </p>
+
+                    <button class="delete-recipe-btn">
+                        Delete
+                    </button>
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <p id="empty-saved">
+                No saved recipes yet.
+            </p>
+
+        {% endif %}
+
+        <a href="/" class="back-link">
+            Back
+        </a>
+
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+</html>

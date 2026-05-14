@@ -1,0 +1,11 @@
+.env
+
+__pycache__/
+*.pyc
+
+app/uploads/*
+!app/uploads/.gitkeep
+
+app/database/*.db
+
+yolov8n.pt
