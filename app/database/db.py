@@ -46,3 +46,21 @@ def save_recipe(recipe_name: str, ingredients: str, steps: str):
 
     conn.commit()
     conn.close()
+
+    
+def get_saved_recipes():
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        SELECT id, recipe_name, ingredients, steps, created_at
+        FROM saved_recipes
+        ORDER BY created_at DESC
+        """
+    )
+
+    recipes = cursor.fetchall()
+    conn.close()
+
+    return recipes

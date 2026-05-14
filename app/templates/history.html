@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
 
-    <title>Easy Food - AI Recipe App</title>
+    <title>History</title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='css/style.css') }}">
@@ -20,7 +20,7 @@
 
         <div class="nav-links">
 
-            <a href="/home" class="nav-home">
+            <a href="/" class="nav-home">
                 Home
             </a>
 
@@ -64,60 +64,52 @@
 
     <div class="container">
 
-        <h1>
-            Easy Food
+        <h1 class="history-page-title">
+            Recently Viewed
         </h1>
 
-        <p class="home-description">
-            Upload a photo of your ingredients and get meal ideas.
+        <div id="recently-viewed-list">
+
+        </div>
+
+        <p id="empty-history">
+            No recently viewed recipes.
         </p>
 
-        <form
-            action="/generate"
-            method="POST"
-            enctype="multipart/form-data"
-        >
-
-            <label class="upload-box">
-
-                <span class="upload-icon">
-                    📷
-                </span>
-
-                <span id="file-label">
-                    Drag & Drop ingredient image here
-                </span>
-
-                <br>
-
-                <small>
-                    or click to browse files
-                </small>
-
-                <input
-                    type="file"
-                    name="ingredient_image"
-                    accept="image/*"
-                >
-
-            </label>
-
-            <input
-                type="text"
-                name="user_preference"
-                class="preference-input"
-                placeholder="What would you like to eat?"
-            >
-
-            <button
-                type="submit"
-                id="generate-btn">
-                Generate Recipes
-            </button>
-
-        </form>
-
     </div>
+
+    <script>
+
+        const recentlyViewedList =
+            document.getElementById("recently-viewed-list");
+
+        const emptyHistory =
+            document.getElementById("empty-history");
+
+        const viewedRecipes =
+            JSON.parse(
+                localStorage.getItem("recentRecipes")
+            ) || [];
+
+        if (viewedRecipes.length > 0) {
+
+            emptyHistory.style.display = "none";
+
+            viewedRecipes.forEach(function(recipe) {
+
+                const item =
+                    document.createElement("div");
+
+                item.className =
+                    "recently-viewed-item";
+
+                item.innerText = recipe;
+
+                recentlyViewedList.appendChild(item);
+            });
+        }
+
+    </script>
 
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 
